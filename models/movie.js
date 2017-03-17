@@ -12,6 +12,10 @@ var movieSchema = new Schema({
     artworkUrl30: String,
     artworkUrl60: String,
     artworkUrl100: String,
+    backdropArt300: String,
+    backdropArt780: String,
+    backdropArt1280: String,
+    backdropArtOriginal: String,
     collectionPrice: Number,
     trackPrice: Number,
     trackRentalPrice: Number,
@@ -27,6 +31,7 @@ var movieSchema = new Schema({
     primaryGenreName: String,
     contentAdvisoryRating: String,
     longDescription: String,
+    imdbShortDescription : String,
     radioStationUrl: String
 });
 

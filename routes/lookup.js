@@ -1,4 +1,5 @@
 var itunes = require('../common/itunes');
+var youtube = require('../common/youtube');
 
 exports.getActor = function (req, res) {
     itunes.lookup({
@@ -14,11 +15,19 @@ exports.getActorMovies = function (req, res) {
     }, res, 'many');
 };
 
-exports.getMovie = function (req, res) {
+exports.getMovie = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'movie'
-    }, res, 'single');
+    }, res, callback, 'single');
+};
+
+exports.getTrailer = function (req, res, callback) {
+    youtube.lookupTrailer({
+        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        part : 'snippet',
+        q: req.params.movieName + " trailer hd"
+    }, res, callback);
 };
 
 exports.getTvShowSeason = function (req, res) {

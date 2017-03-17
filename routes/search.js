@@ -1,4 +1,5 @@
 var itunes = require('../common/itunes');
+var tmdb = require('../common/tmdb');
 
 exports.search = function (req, res) {
     itunes.search({
@@ -9,14 +10,22 @@ exports.search = function (req, res) {
     }, res);
 };
 
-exports.searchMovie = function (req, res) {
+exports.searchMovie = function (req, res, callback) {
     itunes.search({
         term: req.query.q,
         media: 'movie',
         entity: 'movie',
         genreId: req.query.genre || '',
         limit: req.query.limit || 10
-    }, res);
+    }, res, callback);
+};
+
+exports.searchMovieImdb = function (req, res, callback) {
+    tmdb.searchMovie({
+        api_key : '4f185468b45ef3e03d91fc31d962d831',
+        query: req.query.q,
+        include_adult: false
+    }, res, callback);
 };
 
 exports.searchTvShowEpisode = function (req, res) {
