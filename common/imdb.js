@@ -1,6 +1,7 @@
 var request = require('request');
 var qs = require('querystring');
 
+
 var searchEndPoint = 'http://imdb.wemakesites.net/api/search?';
 var lookupEndPoint = 'http://imdb.wemakesites.net/api/';
 
@@ -9,10 +10,7 @@ exports.search = function (parameters, res, callback) {
 };
 
 exports.lookup = function (parameters, res, callback) {
-    console.log("ok");
-    var test = lookupEndPoint  + qs.stringify(parameters) + "?api_key=8c992c14-fde9-409e-8532-7c8d7a307f6e";
-    console.log(test);
-    queryImdbApi(lookupEndPoint  + qs.stringify(parameters) + "?api_key=8c992c14-fde9-409e-8532-7c8d7a307f6e", res, callback);
+    queryImdbApi(lookupEndPoint  + parameters.valueOf() + "?api_key=8c992c14-fde9-409e-8532-7c8d7a307f6e", res, callback);
 };
 
 

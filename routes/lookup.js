@@ -4,8 +4,7 @@ var imdb = require('../common/imdb');
 
 
 exports.actorBio = function (req, res, callback) {
-    console.log(req);
-    imdb.lookup({req}, res, callback);
+    imdb.lookup(req, res, callback);
 };
 
 exports.getActor = function (req, res, callback) {
@@ -15,11 +14,11 @@ exports.getActor = function (req, res, callback) {
     }, res, callback, 'single');
 };
 
-exports.getActorMovies = function (req, res) {
+exports.getActorMovies = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'movie'
-    }, res, 'many');
+    }, res, callback, 'many');
 };
 
 exports.getMovie = function (req, res, callback) {

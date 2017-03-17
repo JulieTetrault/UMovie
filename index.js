@@ -162,7 +162,20 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
 
 });
 
-app.get('/actors/:id/movies', authentication.isAuthenticated, lookup.getActorMovies);
+app.get('/actors/:id/movies', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                lookup.getActorMovies(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
+
 
 app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, res){
     async.series([
