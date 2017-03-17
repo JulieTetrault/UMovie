@@ -146,6 +146,7 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
                         }
                         lookup.actorBio(idArtist, res, callback);
                     }
+
                 ], callback);
             }
 

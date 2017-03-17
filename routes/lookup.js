@@ -5,9 +5,7 @@ var imdb = require('../common/imdb');
 
 exports.actorBio = function (req, res, callback) {
     console.log(req);
-    imdb.lookup({
-        api_key : '8c992c14-fde9-409e-8532-7c8d7a307f6e',
-    }, res, callback);
+    imdb.lookup({req}, res, callback);
 };
 
 exports.getActor = function (req, res, callback) {
