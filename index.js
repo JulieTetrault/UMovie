@@ -119,7 +119,48 @@ app.get('/users/:id', authentication.isAuthenticated, user.findById);
 app.post('/follow', authentication.isAuthenticated, user.follow);
 app.delete('/follow/:id', authentication.isAuthenticated, user.unfollow);
 
-app.get('/actors/:id', authentication.isAuthenticated, lookup.getActor);
+app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                lookup.getActor(req, res, callback);
+            },
+
+            function(callback) {
+                async.waterfall([
+                    function(callback){
+                        lookup.getActor(req, res, callback);
+                    },
+                    function(response, callback) {
+                        var nameActor = encodeURI(response.results[0].artistName);
+                        search.actorImdb(nameActor, res, callback);
+                    },
+
+                    function(response, callback) {
+                        var nameActor = decodeURI(response.term);
+                        var idArtist;
+                        for (var i = 0, len = response.data.results.names.length; i < len; i++){
+                            if(nameActor === response.data.results.names[i].title){
+                                idArtist = response.data.results.names[i].id;
+                                break;
+                            }
+                        }
+                        lookup.actorBio(idArtist, res, callback);
+                    }
+                ], callback);
+            }
+
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+                'imdb': results[1]
+            };
+
+            res.send(data);
+        })
+
+});
+
 app.get('/actors/:id/movies', authentication.isAuthenticated, lookup.getActorMovies);
 
 app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, res){
@@ -193,10 +234,6 @@ app.get('/unsecure/search/movies', function(req, res){
             function(callback){
                 search.searchMovie(req, res, callback);
             },
-            function(callback){
-                // do some more stuff ...
-                callback(null, 'three');
-            }
         ],
         function(err,results){
             //handle error
@@ -204,11 +241,9 @@ app.get('/unsecure/search/movies', function(req, res){
             //results is an array of values returned from each one
             var data = {
                 'imdb': results[0],
-                'itunes': results[1],
-                'youtube': results[2]
+                'itunes': results[1]
             };
 
-            console.log("data");
             res.send(data);
         })
 });
@@ -236,14 +271,10 @@ app.get('/unsecure/movies/:id/:movieName',  function(req, res){
             }
         ],
         function(err,results){
-            //handle error
-
-            //results is an array of values returned from each one
             var data = {
                 'itunes': results[0],
                 'youtube': results[1],
             };
-
             res.send(data);
         })
 });

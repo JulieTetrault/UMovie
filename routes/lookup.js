@@ -1,11 +1,20 @@
 var itunes = require('../common/itunes');
 var youtube = require('../common/youtube');
+var imdb = require('../common/imdb');
 
-exports.getActor = function (req, res) {
+
+exports.actorBio = function (req, res, callback) {
+    console.log(req);
+    imdb.lookup({
+        api_key : '8c992c14-fde9-409e-8532-7c8d7a307f6e',
+    }, res, callback);
+};
+
+exports.getActor = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'movieArtist'
-    }, res, 'single');
+    }, res, callback, 'single');
 };
 
 exports.getActorMovies = function (req, res) {

@@ -1,5 +1,14 @@
 var itunes = require('../common/itunes');
 var tmdb = require('../common/tmdb');
+var imdb = require('../common/imdb');
+
+
+exports.actorImdb = function (req, res, callback) {
+    imdb.search({
+        api_key : '8c992c14-fde9-409e-8532-7c8d7a307f6e',
+        q: req
+    }, res, callback);
+};
 
 exports.search = function (req, res, callback) {
     itunes.search({
