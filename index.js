@@ -65,10 +65,29 @@ app.get('/tokenInfo', authentication.isAuthenticated, login.getToken);
 // Secure API
 
 app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres);
+
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
 
-app.get('/search', authentication.isAuthenticated, search.search);
+app.get('/search', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                search.search(req, res, callback);
+            },
+            function(callback){
+                lookup.getTrailerTv(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+                'youtube': results[1],
+            };
+            res.send(data);
+        })
+});
+
 app.get('/search/actors', authentication.isAuthenticated, search.searchActor);
+
 app.get('/search/movies', function(req, res){
     async.series([
             function(callback){
@@ -77,22 +96,14 @@ app.get('/search/movies', function(req, res){
             function(callback){
                 search.searchMovie(req, res, callback);
             },
-            function(callback){
-                // do some more stuff ...
-                callback(null, 'three');
-            }
+
         ],
         function(err,results){
-            //handle error
 
-            //results is an array of values returned from each one
             var data = {
                 'imdb': results[0],
-                'itunes': results[1],
-                'youtube': results[2]
+                'itunes': results[1]
             };
-
-            console.log("data");
             res.send(data);
         })
 });
@@ -110,8 +121,8 @@ app.delete('/follow/:id', authentication.isAuthenticated, user.unfollow);
 
 app.get('/actors/:id', authentication.isAuthenticated, lookup.getActor);
 app.get('/actors/:id/movies', authentication.isAuthenticated, lookup.getActorMovies);
+
 app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, res){
-    console.log("ok");
     async.series([
             function(callback){
                 lookup.getMovie(req, res, callback);
@@ -121,9 +132,6 @@ app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, 
             }
         ],
         function(err,results){
-            //handle error
-
-            //results is an array of values returned from each one
             var data = {
                 'itunes': results[0],
                 'youtube': results[1],
@@ -132,8 +140,35 @@ app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, 
             res.send(data);
         })
 });
-app.get('/tvshows/seasons/:id', authentication.isAuthenticated, lookup.getTvShowSeason);
-app.get('/tvshows/seasons/:id/episodes', authentication.isAuthenticated, lookup.getTvShowEpisodes);
+app.get('/tvshows/seasons/:id', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                lookup.getTvShowSeason(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
+
+
+
+app.get('/tvshows/seasons/:id/episodes', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                lookup.getTvShowEpisodes(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
 
 app.get('/watchlists', authentication.isAuthenticated, watchlist.getWatchlists);
 app.post('/watchlists', authentication.isAuthenticated, watchlist.createWatchlist);

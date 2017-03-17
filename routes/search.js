@@ -1,13 +1,13 @@
 var itunes = require('../common/itunes');
 var tmdb = require('../common/tmdb');
 
-exports.search = function (req, res) {
+exports.search = function (req, res, callback) {
     itunes.search({
         term: req.query.q,
         media: 'movie,tvShow',
         entity: 'movie,tvSeason',
         limit: req.query.limit || 10
-    }, res);
+    }, res, callback);
 };
 
 exports.searchMovie = function (req, res, callback) {

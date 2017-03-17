@@ -30,16 +30,24 @@ exports.getTrailer = function (req, res, callback) {
     }, res, callback);
 };
 
-exports.getTvShowSeason = function (req, res) {
+exports.getTrailerTv = function (req, res, callback) {
+    youtube.lookupTrailer({
+        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        part : 'snippet',
+        q: req.query.q + " trailer hd"
+    }, res, callback);
+};
+
+exports.getTvShowSeason = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'tvSeason'
-    }, res, 'single');
+    }, res, callback, 'single');
 };
 
-exports.getTvShowEpisodes = function (req, res) {
+exports.getTvShowEpisodes = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'tvEpisode'
-    }, res, 'many');
+    }, res, callback, 'many');
 };
