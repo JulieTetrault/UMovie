@@ -1,10 +1,10 @@
 var request = require('request');
 var qs = require('querystring');
 
-var lookupTrailerEndPoint =  'https://www.googleapis.com/youtube/v3/search?';
+var searchTrailerEndPoint =  'https://www.googleapis.com/youtube/v3/search?';
 
-exports.lookupTrailer = function (parameters, res, callback) {
-    queryYoutuneApi(lookupTrailerEndPoint  + qs.stringify(parameters), res, callback);
+exports.searchTrailer = function (parameters, res, callback) {
+    queryYoutuneApi(searchTrailerEndPoint  + qs.stringify(parameters), res, callback);
 };
 
 

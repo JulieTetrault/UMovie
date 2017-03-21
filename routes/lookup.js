@@ -21,23 +21,16 @@ exports.getActorMovies = function (req, res, callback) {
     }, res, callback, 'many');
 };
 
-exports.getMovie = function (req, res, callback) {
+exports.getMovieItunes = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,
         entity: 'movie'
     }, res, callback, 'single');
 };
 
-exports.getTrailer = function (req, res, callback) {
-    youtube.lookupTrailer({
-        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
-        part : 'snippet',
-        q: req.params.movieName + " trailer hd"
-    }, res, callback);
-};
 
 exports.getTrailerTv = function (req, res, callback) {
-    youtube.lookupTrailer({
+    youtube.searchTrailer({
         key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
         part : 'snippet',
         q: req.query.q + " trailer hd"

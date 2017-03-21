@@ -1,6 +1,16 @@
 var itunes = require('../common/itunes');
+var youtube = require('../common/youtube');
 var tmdb = require('../common/tmdb');
 var imdb = require('../common/imdb');
+
+
+exports.searchTrailerMovie = function (req, res, callback) {
+    youtube.searchTrailer({
+        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        part : 'snippet',
+        q: req + " movie trailer hd"
+    }, res, callback);
+};
 
 
 exports.actorImdb = function (req, res, callback) {
@@ -32,7 +42,7 @@ exports.searchMovie = function (req, res, callback) {
 exports.searchMovieImdb = function (req, res, callback) {
     tmdb.searchMovie({
         api_key : '4f185468b45ef3e03d91fc31d962d831',
-        query: req.query.q,
+        query: req,
         include_adult: false
     }, res, callback);
 };

@@ -64,6 +64,16 @@ app.get('/tokenInfo', authentication.isAuthenticated, login.getToken);
 
 // Secure API
 
+app.get('/discover/movie', authentication.isAuthenticated, function(req, res){
+    async.waterfall([
+            function(callback){
+                genres.getListMoviesByGenre(req, res, callback);
+            }
+        ],
+        function(err,results){
+            res.send(results);
+        })
+});
 app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres);
 
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
@@ -177,19 +187,46 @@ app.get('/actors/:id/movies', authentication.isAuthenticated, function(req, res)
 });
 
 
-app.get('/movies/:id/:movieName', authentication.isAuthenticated, function(req, res){
+app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
     async.series([
             function(callback){
-                lookup.getMovie(req, res, callback);
+                lookup.getMovieItunes(req, res, callback);
             },
-            function(callback){
-                lookup.getTrailer(req, res, callback);
-            }
+            function(callback) {
+                async.waterfall([
+                    function(callback){
+                        lookup.getMovieItunes(req, res, callback);
+                    },
+                    function(response, callback) {
+                        var nameMovie = encodeURI(response.results[0].trackName);
+                        nameMovie = nameMovie.replace(/ *\([^)]*\) */g, "");
+                        if (nameMovie.indexOf(':') > -1)
+                        {
+                            nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
+                        }
+                        console.log(nameMovie);
+                        search.searchMovieImdb(nameMovie, res, callback);
+                    }
+                ], callback);
+            },
+            function(callback) {
+                async.waterfall([
+                    function(callback){
+                        lookup.getMovieItunes(req, res, callback);
+                    },
+                    function(response, callback) {
+                        var nameMovie = encodeURI(response.results[0].trackName);
+                        search.searchTrailerMovie(nameMovie, res, callback);
+                    }
+
+                ], callback);
+            },
         ],
         function(err,results){
             var data = {
                 'itunes': results[0],
-                'youtube': results[1],
+                'imdb': results[1],
+                'youtube': results[2],
             };
 
             res.send(data);
@@ -278,7 +315,7 @@ app.get('/unsecure/movies/:id/:movieName',  function(req, res){
     console.log("ok");
     async.series([
             function(callback){
-                lookup.getMovie(req, res, callback);
+                lookup.getMovieItunes(req, res, callback);
             },
             function(callback){
                 lookup.getTrailer(req, res, callback);

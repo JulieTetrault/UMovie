@@ -6,6 +6,7 @@ var searchEndPoint = 'http://imdb.wemakesites.net/api/search?';
 var lookupEndPoint = 'http://imdb.wemakesites.net/api/';
 
 exports.search = function (parameters, res, callback) {
+    console.log(searchEndPoint  + qs.stringify(parameters));
     queryImdbApi(searchEndPoint  + qs.stringify(parameters), res, callback);
 };
 

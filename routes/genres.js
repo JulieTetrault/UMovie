@@ -1,4 +1,12 @@
 var request = require('request');
+var itunes = require('../common/itunes');
+
+exports.getListMoviesByGenre = function (req, res, callback) {
+    itunes.search({
+        term: 'movie',
+        genreId : req.query.genre
+    }, res, callback);
+};
 
 exports.getMoviesGenres = function (req, res) {
     getGenres(req, res, '33');
