@@ -101,7 +101,13 @@ app.get('/search/actors', authentication.isAuthenticated, search.searchActor);
 app.get('/search/movies', function(req, res){
     async.series([
             function(callback){
-                search.searchMovieImdb(req, res, callback);
+                var nameMovie = req.query.q;
+                nameMovie = nameMovie.replace(/ *\([^)]*\) */g, "");
+                if (nameMovie.indexOf(':') > -1)
+                {
+                    nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
+                }
+                search.searchMovieImdb(nameMovie, res, callback);
             },
             function(callback){
                 search.searchMovie(req, res, callback);
@@ -141,11 +147,13 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
                         lookup.getActor(req, res, callback);
                     },
                     function(response, callback) {
+                        console.log(response);
                         var nameActor = encodeURI(response.results[0].artistName);
                         search.actorImdb(nameActor, res, callback);
                     },
 
                     function(response, callback) {
+                        console.log(response);
                         var nameActor = decodeURI(response.term);
                         var idArtist;
                         for (var i = 0, len = response.data.results.names.length; i < len; i++){
@@ -204,7 +212,6 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
                         {
                             nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
                         }
-                        console.log(nameMovie);
                         search.searchMovieImdb(nameMovie, res, callback);
                     }
                 ], callback);
