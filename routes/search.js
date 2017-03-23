@@ -20,11 +20,20 @@ exports.actorImdb = function (req, res, callback) {
     }, res, callback);
 };
 
-exports.search = function (req, res, callback) {
+exports.searchGlobal = function (req, res, callback) {
     itunes.search({
         term: req.query.q,
         media: 'movie,tvShow',
         entity: 'movie,tvSeason',
+        limit: req.query.limit || 10
+    }, res, callback);
+};
+
+exports.searchTvShows = function (req, res, callback) {
+    itunes.search({
+        term: req.query.q,
+        media: 'tvShow',
+        entity: 'tvSeason',
         limit: req.query.limit || 10
     }, res, callback);
 };

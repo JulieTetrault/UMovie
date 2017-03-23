@@ -81,7 +81,21 @@ app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenr
 app.get('/search', authentication.isAuthenticated, function(req, res){
     async.series([
             function(callback){
-                search.search(req, res, callback);
+                search.searchGlobal(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
+
+app.get('/search/tvshows', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                search.searchTvShows(req, res, callback);
             },
             function(callback){
                 lookup.getTrailerTv(req, res, callback);
@@ -282,7 +296,7 @@ app.delete('/watchlists/:id', authentication.isAuthenticated, watchlist.removeWa
 app.get('/unsecure/genres/movies', genres.getMoviesGenres);
 app.get('/unsecure/genres/tvshows', genres.getTvShowsGenres);
 
-app.get('/unsecure/search', search.search);
+app.get('/unsecure//search/tvshows', search.searchTvShows);
 app.get('/unsecure/search/actors', search.searchActor);
 app.get('/unsecure/search/movies', function(req, res){
     async.series([
