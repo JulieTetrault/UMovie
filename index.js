@@ -80,13 +80,27 @@ app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenr
 
 app.get('/search', authentication.isAuthenticated, function(req, res){
     async.series([
+
             function(callback){
-                search.searchGlobal(req, res, callback);
+                search.searchMovie(req, res, callback);
+            },
+            function(callback){
+                search.searchTvShows(req, res, callback);
+            },
+
+            function(callback){
+                search.searchActor(req, res, callback);
             }
+
         ],
         function(err,results){
+
         var query = ((req.query.q).toLowerCase()).trim();
-        console.log(query);
+
+
+        (results[0].results).push.apply(results[0].results, results[1].results);
+        (results[0].results).push.apply(results[0].results, results[2].results);
+
         var resultSearchMain = [];
         var resultSearchSecondary = [];
             for(var i = 0; i<results[0].results.length; i++){
@@ -104,6 +118,16 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                 if(results[0].results[i].kind == "feature-movie"){
                     if((results[0].results[i].trackName).toLowerCase().indexOf(query) != -1){
                         if((results[0].results[i].trackName).toLowerCase().indexOf(query) == 0){
+                            resultSearchMain.push(results[0].results[i]);
+                        }
+                        else{
+                            resultSearchSecondary.push(results[0].results[i]);
+                        }
+                    }
+                }
+                if(results[0].results[i].wrapperType == "artist"){
+                    if((results[0].results[i].artistName).toLowerCase().indexOf(query) != -1){
+                        if((results[0].results[i].artistName).toLowerCase().indexOf(query) == 0){
                             resultSearchMain.push(results[0].results[i]);
                         }
                         else{
