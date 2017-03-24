@@ -25,7 +25,6 @@ exports.searchGlobal = function (req, res, callback) {
         term: req.query.q,
         media: 'movie,tvShow',
         entity: 'movie,tvSeason',
-        limit: req.query.limit || 10
     }, res, callback);
 };
 
@@ -76,12 +75,12 @@ exports.searchTvShowSeason = function (req, res) {
     }, res);
 };
 
-exports.searchActor = function (req, res) {
+exports.searchActor = function (req, res,  callback) {
     itunes.search({
         attribute : 'movieArtistTerm',
         term: req.query.q,
         media: 'movie',
         entity: 'movieArtist',
         limit: req.query.limit || 10
-    }, res);
+    }, res,  callback);
 };

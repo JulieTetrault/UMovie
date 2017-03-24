@@ -85,8 +85,79 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
             }
         ],
         function(err,results){
+        var query = ((req.query.q).toLowerCase()).trim();
+        console.log(query);
+        var resultSearchMain = [];
+        var resultSearchSecondary = [];
+            for(var i = 0; i<results[0].results.length; i++){
+                if(results[0].results[i].collectionType == "TV Season"){
+                    if((results[0].results[i].artistName).toLowerCase().indexOf(query) != -1){
+                        if((results[0].results[i].artistName).toLowerCase().indexOf(query) == 0){
+                            resultSearchMain.push(results[0].results[i]);
+                        }
+                        else{
+                            resultSearchSecondary.push(results[0].results[i]);
+                        }
+
+                    }
+                }
+                if(results[0].results[i].kind == "feature-movie"){
+                    if((results[0].results[i].trackName).toLowerCase().indexOf(query) != -1){
+                        if((results[0].results[i].trackName).toLowerCase().indexOf(query) == 0){
+                            resultSearchMain.push(results[0].results[i]);
+                        }
+                        else{
+                            resultSearchSecondary.push(results[0].results[i]);
+                        }
+                    }
+                }
+            }
+            resultSearchMain.sort(function(a, b){
+                var aName = "";
+                var bName = "";
+                if(a.collectionType == "TV Season"){
+                    aName = (a.artistName).toLowerCase();
+                }
+                if(b.collectionType == "TV Season"){
+                    bName = b.artistName.toLowerCase();
+                }
+                if(a.kind == "feature-movie"){
+                    aName = a.trackName.toLowerCase();
+                }
+                if(b.kind == "feature-movie"){
+                    bName = b.trackName.toLowerCase();
+                }
+
+                if(aName < bName) return -1;
+                if(aName > bName) return 1;
+                return 0;
+            });
+
+            resultSearchSecondary.sort(function(a, b){
+                var aName = "";
+                var bName = "";
+                if(a.collectionType == "TV Season"){
+                    aName = (a.artistName).toLowerCase();
+                }
+                if(b.collectionType == "TV Season"){
+                    bName = b.artistName.toLowerCase();
+                }
+                if(a.kind == "feature-movie"){
+                    aName = a.trackName.toLowerCase();
+                }
+                if(b.kind == "feature-movie"){
+                    bName = b.trackName.toLowerCase();
+                }
+
+                if(aName < bName) return -1;
+                if(aName > bName) return 1;
+                return 0;
+            });
+
+            resultSearchMain.push.apply(resultSearchMain, resultSearchSecondary);
+
             var data = {
-                'itunes': results[0],
+                'itunes': resultSearchMain,
             };
             res.send(data);
         })
@@ -110,9 +181,21 @@ app.get('/search/tvshows', authentication.isAuthenticated, function(req, res){
         })
 });
 
-app.get('/search/actors', authentication.isAuthenticated, search.searchActor);
+app.get('/search/actors', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                search.searchActor(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
 
-app.get('/search/movies', function(req, res){
+app.get('/search/movies', authentication.isAuthenticated, function(req, res){
     async.series([
             function(callback){
                 var nameMovie = req.query.q;
