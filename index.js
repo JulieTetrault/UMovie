@@ -105,20 +105,43 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                         search.searchActor(req, res, callback);
                     },
                     function(response, callback) {
-                        async.eachSeries(response, function (item, callback) {
-                            search.searchActorTmdb(item.artistName, res, callback);
-                        }, callback);
+                        var resultSearchActor = [];
+                        var nbActeurs = response.results.length;
+                        async.each(response.results, function (item, callback) {
+
+                            async.series([
+                                    function (callback) {
+                                        callback(null, item)
+                                    },
+                                    function (callback) {
+                                        search.searchActorTmdb(item.artistName, res, callback);
+                                    }
+                                ],
+                                function (err, results) {
+                                    var data = {
+                                        'itunes': results[0],
+                                        'imdb': results[1],
+                                    };
+                                    resultSearchActor.push(data);
+                                    if(resultSearchActor.length == nbActeurs){
+                                        console.log(resultSearchActor);
+                                        callback(null, resultSearchActor);
+                                    }
+                                });
+
+                        },
+                        callback(null, resultSearchActor));
                     }
                 ],
                 function(err,results){
-                    console.log(results[0]);
+                    console.log(results);
                     callback(null, results);
-                });
+                })
             }
 
         ],
         function(err,results){
-        console.log(results);
+        //console.log(results);
 
         var query = ((req.query.q).toLowerCase()).trim();
 
