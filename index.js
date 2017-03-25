@@ -94,7 +94,6 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                         search.searchActor(req, res, callback);
                     },
                     function(response, callback) {
-                        for( var i=0; i)
                         callback(null, response);
 
                     }
