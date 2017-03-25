@@ -8,6 +8,13 @@ exports.getListMoviesByGenre = function (req, res, callback) {
     }, res, callback);
 };
 
+exports.getListSeriesByGenre = function (req, res, callback) {
+    itunes.search({
+        term: 'all',
+        genreId : req.query.genre
+    }, res, callback);
+};
+
 exports.getMoviesGenres = function (req, res) {
     getGenres(req, res, '33');
 };
