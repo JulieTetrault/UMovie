@@ -74,6 +74,17 @@ app.get('/discover/movie', authentication.isAuthenticated, function(req, res){
             res.send(results);
         })
 });
+
+app.get('/discover/serie', authentication.isAuthenticated, function(req, res){
+    async.waterfall([
+            function(callback){
+                genres.getListSeriesByGenre(req, res, callback);
+            }
+        ],
+        function(err,results){
+            res.send(results);
+        })
+});
 app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres);
 
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
