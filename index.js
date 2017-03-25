@@ -269,26 +269,14 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
                     },
 
                     function(response, callback) {
-                        console.log(response);
                         var nameActor = encodeURI(response.results[0].artistName);
                         search.searchActorTmdb(nameActor, res, callback);
                     },
 
                     function(response, callback) {
-                        console.log("ok");
-                        console.log(response);
-                        callback();
-                        /*
-                        var nameActor = decodeURI(response.term);
-                        var idArtist;
-                        for (var i = 0, len = response.data.results.names.length; i < len; i++){
-                            if(nameActor === response.data.results.names[i].title){
-                                idArtist = response.data.results.names[i].id;
-                                break;
-                            }
-                        }
-                        lookup.actorBio(idArtist, res, callback);
-                        */
+                        lookup.getActorTmdb(response.results[0].id, res, callback);
+                        console.log('ok');
+
                     }
 
                 ], callback);
@@ -296,8 +284,11 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
 
         ],
         function(err,results){
+            var profile = results[1].profile_path
+            results[1].profile_path = 'https://image.tmdb.org/t/p/original' + profile;
             var data = {
                 'itunes': results[0],
+                'imdb':results[1],
             };
 
             res.send(data);

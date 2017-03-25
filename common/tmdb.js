@@ -3,6 +3,7 @@ var qs = require('querystring');
 
 var searchMovieEndPoint =  'https://api.themoviedb.org/3/search/movie?';
 var searchActorEndPoint = 'https://api.themoviedb.org/3/search/person?';
+var lookupActorEndPoint = 'https://api.themoviedb.org/3/person/';
 
 exports.searchMovie = function (parameters, res, callback) {
     queryTmdbApi(searchMovieEndPoint  + qs.stringify(parameters), res, callback);
@@ -12,7 +13,12 @@ exports.searchActor = function (parameters, res, callback) {
     queryTmdbApiActor(searchActorEndPoint  + qs.stringify(parameters), res, callback);
 };
 
+exports.lookupActor = function (parameters, res, callback) {
+    queryTmdbApiActor(lookupActorEndPoint + parameters.q +'?api_key=4f185468b45ef3e03d91fc31d962d831', res, callback);
+};
+
 function queryTmdbApiActor(url, res, callback) {
+    console.log(url);
     request({
             uri: url,
             method: 'GET',

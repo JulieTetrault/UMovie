@@ -1,5 +1,6 @@
 var itunes = require('../common/itunes');
 var youtube = require('../common/youtube');
+var tmdb = require('../common/tmdb');
 
 
 exports.getActor = function (req, res, callback) {
@@ -7,6 +8,13 @@ exports.getActor = function (req, res, callback) {
         id: req.params.id,
         entity: 'movieArtist'
     }, res, callback, 'single');
+};
+
+exports.getActorTmdb = function (req, res, callback) {
+    console.log(req);
+    tmdb.lookupActor({
+        q : req
+    }, res, callback);
 };
 
 exports.getActorMovies = function (req, res, callback) {
