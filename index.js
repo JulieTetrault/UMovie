@@ -210,6 +210,8 @@ app.get('/search/actors', authentication.isAuthenticated, function(req, res){
             function(callback){
                 search.searchActor(req, res, callback);
             }
+
+
         ],
         function(err,results){
             var data = {
@@ -275,7 +277,6 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
 
                     function(response, callback) {
                         lookup.getActorTmdb(response.results[0].id, res, callback);
-                        console.log('ok');
 
                     }
 
@@ -338,7 +339,7 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
                         lookup.getMovieItunes(req, res, callback);
                     },
                     function(response, callback) {
-                        var nameMovie = encodeURI(response.results[0].trackName);
+                        var nameMovie = response.results[0].trackName;
                         search.searchTrailerMovie(nameMovie, res, callback);
                     }
 
