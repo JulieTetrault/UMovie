@@ -94,21 +94,26 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                         search.searchActor(req, res, callback);
                     },
                     function(response, callback) {
-                        callback(null, response);
-
+                        async.eachSeries(response, function (item, callback) {
+                            search.searchActorTmdb(item.artistName, res, callback);
+                        }, callback);
                     }
-
-                ], callback);
-            },
+                ],
+                function(err,results){
+                    console.log(results[0]);
+                    callback(null, results);
+                });
+            }
 
         ],
         function(err,results){
+        console.log(results);
 
         var query = ((req.query.q).toLowerCase()).trim();
 
 
         (results[0].results).push.apply(results[0].results, results[1].results);
-        (results[0].results).push.apply(results[0].results, results[2].results);
+        //(results[0].results).push.apply(results[0].results, results[2].results);
 
         var resultSearchMain = [];
         var resultSearchSecondary = [];

@@ -18,7 +18,6 @@ exports.lookupActor = function (parameters, res, callback) {
 };
 
 function queryTmdbApiActor(url, res, callback) {
-    console.log(url);
     request({
             uri: url,
             method: 'GET',

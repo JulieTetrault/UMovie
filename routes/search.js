@@ -77,7 +77,6 @@ exports.searchActor = function (req, res,  callback) {
 };
 
 exports.searchActorTmdb = function (req, res,  callback) {
-    console.log(req);
     tmdb.searchActor({
         api_key : '4f185468b45ef3e03d91fc31d962d831',
         query: req,
