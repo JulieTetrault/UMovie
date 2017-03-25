@@ -1,11 +1,6 @@
 var itunes = require('../common/itunes');
 var youtube = require('../common/youtube');
-var imdb = require('../common/imdb');
 
-
-exports.actorBio = function (req, res, callback) {
-    imdb.lookup(req, res, callback);
-};
 
 exports.getActor = function (req, res, callback) {
     itunes.lookup({

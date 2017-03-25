@@ -88,7 +88,7 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                 search.searchTvShows(req, res, callback);
             },
 
-            function(callback){
+            function(callback) {
                 search.searchActor(req, res, callback);
             }
 
@@ -267,14 +267,18 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
                     function(callback){
                         lookup.getActor(req, res, callback);
                     },
-                    function(response, callback) {
-                        console.log(response);
-                        var nameActor = encodeURI(response.results[0].artistName);
-                        search.actorImdb(nameActor, res, callback);
-                    },
 
                     function(response, callback) {
                         console.log(response);
+                        var nameActor = encodeURI(response.results[0].artistName);
+                        search.searchActorTmdb(nameActor, res, callback);
+                    },
+
+                    function(response, callback) {
+                        console.log("ok");
+                        console.log(response);
+                        callback();
+                        /*
                         var nameActor = decodeURI(response.term);
                         var idArtist;
                         for (var i = 0, len = response.data.results.names.length; i < len; i++){
@@ -284,6 +288,7 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
                             }
                         }
                         lookup.actorBio(idArtist, res, callback);
+                        */
                     }
 
                 ], callback);
@@ -293,7 +298,6 @@ app.get('/actors/:id', authentication.isAuthenticated, function(req, res){
         function(err,results){
             var data = {
                 'itunes': results[0],
-                'imdb': results[1]
             };
 
             res.send(data);

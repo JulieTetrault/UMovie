@@ -9,9 +9,31 @@ exports.searchMovie = function (parameters, res, callback) {
 };
 
 exports.searchActor = function (parameters, res, callback) {
-    queryTmdbApi(searchActorEndPoint  + qs.stringify(parameters), res, callback);
+    queryTmdbApiActor(searchActorEndPoint  + qs.stringify(parameters), res, callback);
 };
 
+function queryTmdbApiActor(url, res, callback) {
+    request({
+            uri: url,
+            method: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('api_key', '4f185468b45ef3e03d91fc31d962d831');
+            },
+        },
+        function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+                successCallback2(JSON.parse(body), callback);
+            } else {
+                errorCallback(res, error, response, body);
+            }
+        }
+    );
+
+}
+
+function successCallback2(body, callback) {
+    callback(null, body);
+}
 
 
 function queryTmdbApi(url, res, callback) {

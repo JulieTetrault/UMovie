@@ -1,8 +1,6 @@
 var itunes = require('../common/itunes');
 var youtube = require('../common/youtube');
 var tmdb = require('../common/tmdb');
-var imdb = require('../common/imdb');
-
 
 exports.searchTrailerMovie = function (req, res, callback) {
     youtube.searchTrailer({
@@ -12,13 +10,6 @@ exports.searchTrailerMovie = function (req, res, callback) {
     }, res, callback);
 };
 
-
-exports.actorImdb = function (req, res, callback) {
-    imdb.search({
-        api_key : '8c992c14-fde9-409e-8532-7c8d7a307f6e',
-        q: req
-    }, res, callback);
-};
 
 exports.searchGlobal = function (req, res, callback) {
     itunes.search({
@@ -83,4 +74,13 @@ exports.searchActor = function (req, res,  callback) {
         entity: 'movieArtist',
         limit: req.query.limit || 10
     }, res,  callback);
+};
+
+exports.searchActorTmdb = function (req, res,  callback) {
+    console.log(req);
+    tmdb.searchActor({
+        api_key : '4f185468b45ef3e03d91fc31d962d831',
+        query: req,
+        include_adult: false
+    }, res, callback);
 };
