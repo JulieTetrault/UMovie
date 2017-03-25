@@ -89,8 +89,18 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
             },
 
             function(callback) {
-                search.searchActor(req, res, callback);
-            }
+                async.waterfall([
+                    function(callback) {
+                        search.searchActor(req, res, callback);
+                    },
+                    function(response, callback) {
+                        for( var i=0; i)
+                        callback(null, response);
+
+                    }
+
+                ], callback);
+            },
 
         ],
         function(err,results){
@@ -210,7 +220,6 @@ app.get('/search/actors', authentication.isAuthenticated, function(req, res){
             function(callback){
                 search.searchActor(req, res, callback);
             }
-
 
         ],
         function(err,results){
