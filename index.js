@@ -85,6 +85,44 @@ app.get('/discover/serie', authentication.isAuthenticated, function(req, res){
             res.send(results);
         })
 });
+
+app.get('/discover/actor', authentication.isAuthenticated, function(req, res){
+    var resultSearchActor = [];
+    async.waterfall([
+            function(callback){
+                genres.getListActorsByGenre(req, res, callback);
+            },
+            function(response, callback) {
+                var nbActeurs = response.results.length;
+                async.each(response.results, function (item) {
+                    async.series([
+                            function (callback) {
+                                callback(null, item)
+                            },
+                            function (callback) {
+                                search.searchActorTmdb(item.artistName, res, callback);
+                            }
+                        ],
+                        function (err, results) {
+
+                            var data = {
+                                'itunes': results[0],
+                                'imdb': results[1],
+                            };
+                            resultSearchActor.push(data);
+                            if(resultSearchActor.length == nbActeurs){
+                                callback(null, resultSearchActor);
+                            }
+                        });
+
+                });
+            }
+        ],
+        function(err,results){
+            res.send(results);
+        })
+});
+
 app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres);
 
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);

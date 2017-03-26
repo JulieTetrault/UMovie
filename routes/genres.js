@@ -15,6 +15,13 @@ exports.getListSeriesByGenre = function (req, res, callback) {
     }, res, callback);
 };
 
+exports.getListActorsByGenre = function (req, res, callback) {
+    itunes.search({
+        term: 'artist',
+        genreId : req.query.genre
+    }, res, callback);
+};
+
 exports.getMoviesGenres = function (req, res) {
     getGenres(req, res, '33');
 };
