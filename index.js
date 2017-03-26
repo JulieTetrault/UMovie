@@ -100,54 +100,50 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
             },
 
             function(callback) {
+                var resultSearchActor = [];
                 async.waterfall([
                     function(callback) {
                         search.searchActor(req, res, callback);
                     },
                     function(response, callback) {
-                        var resultSearchActor = [];
                         var nbActeurs = response.results.length;
-                        async.each(response.results, function (item, callback) {
+                            async.each(response.results, function (item) {
+                                async.series([
+                                        function (callback) {
+                                            callback(null, item)
+                                        },
+                                        function (callback) {
+                                            search.searchActorTmdb(item.artistName, res, callback);
+                                        }
+                                    ],
+                                    function (err, results) {
 
-                            async.series([
-                                    function (callback) {
-                                        callback(null, item)
-                                    },
-                                    function (callback) {
-                                        search.searchActorTmdb(item.artistName, res, callback);
-                                    }
-                                ],
-                                function (err, results) {
-                                    var data = {
-                                        'itunes': results[0],
-                                        'imdb': results[1],
-                                    };
-                                    resultSearchActor.push(data);
-                                    if(resultSearchActor.length == nbActeurs){
-                                        console.log(resultSearchActor);
-                                        callback(null, resultSearchActor);
-                                    }
-                                });
+                                        var data = {
+                                            'itunes': results[0],
+                                            'imdb': results[1],
+                                        };
+                                        resultSearchActor.push(data);
+                                        if(resultSearchActor.length == nbActeurs){
+                                            callback(null, resultSearchActor);
+                                        }
+                                    });
 
-                        },
-                        callback(null, resultSearchActor));
+                            });
                     }
-                ],
-                function(err,results){
-                    console.log(results);
-                    callback(null, results);
-                })
+                ], callback)
             }
 
         ],
         function(err,results){
-        //console.log(results);
+
+        //console.log(results[2]);
 
         var query = ((req.query.q).toLowerCase()).trim();
 
 
         (results[0].results).push.apply(results[0].results, results[1].results);
-        //(results[0].results).push.apply(results[0].results, results[2].results);
+        (results[0].results).push.apply(results[0].results, results[2]);
+        //console.log(results[0]);
 
         var resultSearchMain = [];
         var resultSearchSecondary = [];
@@ -163,7 +159,7 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
 
                     }
                 }
-                if(results[0].results[i].kind == "feature-movie"){
+                else if(results[0].results[i].kind == "feature-movie"){
                     if((results[0].results[i].trackName).toLowerCase().indexOf(query) != -1){
                         if((results[0].results[i].trackName).toLowerCase().indexOf(query) == 0){
                             resultSearchMain.push(results[0].results[i]);
@@ -173,13 +169,15 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                         }
                     }
                 }
-                if(results[0].results[i].wrapperType == "artist"){
-                    if((results[0].results[i].artistName).toLowerCase().indexOf(query) != -1){
-                        if((results[0].results[i].artistName).toLowerCase().indexOf(query) == 0){
-                            resultSearchMain.push(results[0].results[i]);
-                        }
-                        else{
-                            resultSearchSecondary.push(results[0].results[i]);
+                else{
+                    if(results[0].results[i].itunes.wrapperType == "artist"){
+                        if((results[0].results[i].itunes.artistName).toLowerCase().indexOf(query) != -1){
+                            if((results[0].results[i].itunes.artistName).toLowerCase().indexOf(query) == 0){
+                                resultSearchMain.push(results[0].results[i]);
+                            }
+                            else{
+                                resultSearchSecondary.push(results[0].results[i]);
+                            }
                         }
                     }
                 }
@@ -190,14 +188,24 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                 if(a.collectionType == "TV Season"){
                     aName = (a.artistName).toLowerCase();
                 }
+                else if(a.kind == "feature-movie"){
+                    aName = a.trackName.toLowerCase();
+                }
+                else{
+                    if(a.itunes.wrapperType == "artist"){
+                        aName = a.itunes.artistName.toLowerCase();
+                    }
+                }
                 if(b.collectionType == "TV Season"){
                     bName = b.artistName.toLowerCase();
                 }
-                if(a.kind == "feature-movie"){
-                    aName = a.trackName.toLowerCase();
-                }
-                if(b.kind == "feature-movie"){
+                else if(b.kind == "feature-movie"){
                     bName = b.trackName.toLowerCase();
+                }
+                else{
+                    if(b.itunes.wrapperType == "artist"){
+                        bName = b.itunes.artistName.toLowerCase();
+                    }
                 }
 
                 if(aName < bName) return -1;
@@ -211,14 +219,24 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
                 if(a.collectionType == "TV Season"){
                     aName = (a.artistName).toLowerCase();
                 }
+                else if(a.kind == "feature-movie"){
+                    aName = a.trackName.toLowerCase();
+                }
+                else{
+                    if(a.itunes.wrapperType == "artist"){
+                        aName = a.itunes.artistName.toLowerCase();
+                    }
+                }
                 if(b.collectionType == "TV Season"){
                     bName = b.artistName.toLowerCase();
                 }
-                if(a.kind == "feature-movie"){
-                    aName = a.trackName.toLowerCase();
-                }
-                if(b.kind == "feature-movie"){
+                else if(b.kind == "feature-movie"){
                     bName = b.trackName.toLowerCase();
+                }
+                else{
+                    if(b.itunes.wrapperType == "artist"){
+                        bName = b.itunes.artistName.toLowerCase();
+                    }
                 }
 
                 if(aName < bName) return -1;
@@ -227,6 +245,7 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
             });
 
             resultSearchMain.push.apply(resultSearchMain, resultSearchSecondary);
+            //console.log(resultSearchMain);
 
             var data = {
                 'itunes': resultSearchMain,
