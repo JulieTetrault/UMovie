@@ -137,7 +137,19 @@ app.get('/genres/movies', authentication.isAuthenticated, function(req, res){
         })
 });
 
-app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
+app.get('/genres/tvShows', authentication.isAuthenticated, function(req, res){
+    async.waterfall([
+            function(callback){
+                genres.getSeriesGenresImdb(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'imdb': results,
+            };
+            res.send(data);
+        })
+});
 
 app.get('/search', authentication.isAuthenticated, function(req, res){
     async.waterfall([

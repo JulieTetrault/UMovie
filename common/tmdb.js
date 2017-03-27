@@ -6,16 +6,22 @@ var api_key = 'api_key=4f185468b45ef3e03d91fc31d962d831';
 var config_backdrop = 'https://image.tmdb.org/t/p/original';
 
 var listGenresMovieEndPoint = 'https://api.themoviedb.org/3/genre/movie/list?'+api_key;
+var listGenresSerieEndPoint = 'https://api.themoviedb.org/3/genre/tv/list?'+api_key;
 var multiSearchEndPoint =  'https://api.themoviedb.org/3/search/multi?'+api_key +'&';
 var searchMovieEndPoint =  'https://api.themoviedb.org/3/search/movie?'+api_key;
 var searchActorEndPoint = 'https://api.themoviedb.org/3/search/person?'+api_key;
 var lookupMovieEndPoint = 'https://api.themoviedb.org/3/movie/';
 var lookupActorEndPoint = 'https://api.themoviedb.org/3/person/';
 var discoverMovieEndPoint = 'https://api.themoviedb.org/3/discover/movie?'+api_key;
+var discoverSerieEndPoint = 'https://api.themoviedb.org/3/discover/tv?'+api_key;
 
 
 exports.genresMovie = function (parameters, res, callback) {
     queryTmdbApi(listGenresMovieEndPoint, res, callback);
+};
+
+exports.genresSerie = function (parameters, res, callback) {
+    queryTmdbApi(listGenresSerieEndPoint, res, callback);
 };
 
 exports.multiSearch = function (parameters, res, callback) {
@@ -89,6 +95,38 @@ exports.discoverMovie = function (parameters, res, callback) {
                 }
             }
         } ],
+        function(err,results){
+            var data = {
+                'imdb': results.results,
+            };
+            callback(null, data);
+
+        });
+};
+
+exports.discoverSerie = function (parameters, res, callback) {
+
+    async.waterfall([
+            function(callback){
+                queryTmdbApi(discoverSerieEndPoint  + '&'+ qs.stringify(parameters), res, callback);
+            },
+
+            function(response, callback) {
+                var nbResults = response.results.length;
+                for(var i = 0; i<nbResults; i++){
+                    var backdrop_path = response.results[i].backdrop_path;
+                    backdrop_path = config_backdrop + backdrop_path;
+                    response.results[i].backdrop_path = backdrop_path;
+
+                    var poster_path = response.results[i].poster_path;
+                    poster_path= config_backdrop + poster_path;
+                    response.results[i].poster_path = poster_path;
+
+                    if(i == nbResults -1){
+                        callback(null, response);
+                    }
+                }
+            } ],
         function(err,results){
             var data = {
                 'imdb': results.results,

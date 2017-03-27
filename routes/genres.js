@@ -13,10 +13,12 @@ exports.getListMoviesByGenre = function (req, res, callback) {
 };
 
 exports.getListSeriesByGenre = function (req, res, callback) {
-    itunes.search({
-        term: 'all',
-        genreId : req.query.genre,
-        limit: 200
+    tmdb.discoverSerie({
+        sort_by: 'popularity.desc',
+        include_adult:false,
+        include_video:false,
+        page:1,
+        with_genres:req.query.genre
     }, res, callback);
 };
 
@@ -38,6 +40,10 @@ exports.getMoviesGenresImdb = function (req, res, callback) {
 
 exports.getTvShowsGenres = function (req, res) {
     getGenres(req, res, '32');
+};
+
+exports.getSeriesGenresImdb = function (req, res, callback) {
+    tmdb.genresSerie({}, res, callback);
 };
 
 function getGenres(req, res, entityCode) {
