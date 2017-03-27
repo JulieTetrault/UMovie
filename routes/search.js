@@ -12,10 +12,11 @@ exports.searchTrailerMovie = function (req, res, callback) {
 
 
 exports.searchGlobal = function (req, res, callback) {
-    itunes.search({
-        term: req.query.q,
-        media: 'movie,tvShow',
-        entity: 'movie,tvSeason',
+    tmdb.multiSearch({
+        api_key : '4f185468b45ef3e03d91fc31d962d831',
+        query: req.query.q,
+        page: 1,
+        include_adult: false
     }, res, callback);
 };
 

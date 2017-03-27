@@ -128,169 +128,17 @@ app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
 
 app.get('/search', authentication.isAuthenticated, function(req, res){
-    async.series([
-
+    async.waterfall([
             function(callback){
-                search.searchMovie(req, res, callback);
-            },
-            function(callback){
-                search.searchTvShows(req, res, callback);
-            },
-
-            function(callback) {
-                var resultSearchActor = [];
-                async.waterfall([
-                    function(callback) {
-                        search.searchActor(req, res, callback);
-                    },
-                    function(response, callback) {
-                        var nbActeurs = response.results.length;
-                            async.each(response.results, function (item) {
-                                async.series([
-                                        function (callback) {
-                                            callback(null, item)
-                                        },
-                                        function (callback) {
-                                            search.searchActorTmdb(item.artistName, res, callback);
-                                        }
-                                    ],
-                                    function (err, results) {
-
-                                        var data = {
-                                            'itunes': results[0],
-                                            'imdb': results[1],
-                                        };
-                                        resultSearchActor.push(data);
-                                        if(resultSearchActor.length == nbActeurs){
-                                            callback(null, resultSearchActor);
-                                        }
-                                    });
-
-                            });
-                    }
-                ], callback)
+                search.searchGlobal(req, res, callback);
             }
-
         ],
         function(err,results){
-
-        console.log(results[0]);
-        console.log(results[1]);
-        console.log(results[2]);
-
-        var query = ((req.query.q).toLowerCase()).trim();
-
-
-        (results[0].results).push.apply(results[0].results, results[1].results);
-        (results[0].results).push.apply(results[0].results, results[2]);
-        //console.log(results[0]);
-
-        var resultSearchMain = [];
-        var resultSearchSecondary = [];
-            for(var i = 0; i<results[0].results.length; i++){
-                if(results[0].results[i].collectionType == "TV Season"){
-                    if((results[0].results[i].artistName).toLowerCase().indexOf(query) != -1){
-                        if((results[0].results[i].artistName).toLowerCase().indexOf(query) == 0){
-                            resultSearchMain.push(results[0].results[i]);
-                        }
-                        else{
-                            resultSearchSecondary.push(results[0].results[i]);
-                        }
-
-                    }
-                }
-                else if(results[0].results[i].kind == "feature-movie"){
-                    if((results[0].results[i].trackName).toLowerCase().indexOf(query) != -1){
-                        if((results[0].results[i].trackName).toLowerCase().indexOf(query) == 0){
-                            resultSearchMain.push(results[0].results[i]);
-                        }
-                        else{
-                            resultSearchSecondary.push(results[0].results[i]);
-                        }
-                    }
-                }
-                else{
-                    if(results[0].results[i].itunes.wrapperType == "artist"){
-                        if((results[0].results[i].itunes.artistName).toLowerCase().indexOf(query) != -1){
-                            if((results[0].results[i].itunes.artistName).toLowerCase().indexOf(query) == 0){
-                                resultSearchMain.push(results[0].results[i]);
-                            }
-                            else{
-                                resultSearchSecondary.push(results[0].results[i]);
-                            }
-                        }
-                    }
-                }
-            }
-            resultSearchMain.sort(function(a, b){
-                var aName = "";
-                var bName = "";
-                if(a.collectionType == "TV Season"){
-                    aName = (a.artistName).toLowerCase();
-                }
-                else if(a.kind == "feature-movie"){
-                    aName = a.trackName.toLowerCase();
-                }
-                else{
-                    if(a.itunes.wrapperType == "artist"){
-                        aName = a.itunes.artistName.toLowerCase();
-                    }
-                }
-                if(b.collectionType == "TV Season"){
-                    bName = b.artistName.toLowerCase();
-                }
-                else if(b.kind == "feature-movie"){
-                    bName = b.trackName.toLowerCase();
-                }
-                else{
-                    if(b.itunes.wrapperType == "artist"){
-                        bName = b.itunes.artistName.toLowerCase();
-                    }
-                }
-
-                if(aName < bName) return -1;
-                if(aName > bName) return 1;
-                return 0;
-            });
-
-            resultSearchSecondary.sort(function(a, b){
-                var aName = "";
-                var bName = "";
-                if(a.collectionType == "TV Season"){
-                    aName = (a.artistName).toLowerCase();
-                }
-                else if(a.kind == "feature-movie"){
-                    aName = a.trackName.toLowerCase();
-                }
-                else{
-                    if(a.itunes.wrapperType == "artist"){
-                        aName = a.itunes.artistName.toLowerCase();
-                    }
-                }
-                if(b.collectionType == "TV Season"){
-                    bName = b.artistName.toLowerCase();
-                }
-                else if(b.kind == "feature-movie"){
-                    bName = b.trackName.toLowerCase();
-                }
-                else{
-                    if(b.itunes.wrapperType == "artist"){
-                        bName = b.itunes.artistName.toLowerCase();
-                    }
-                }
-
-                if(aName < bName) return -1;
-                if(aName > bName) return 1;
-                return 0;
-            });
-
-            resultSearchMain.push.apply(resultSearchMain, resultSearchSecondary);
-            console.log("fin");
-
             var data = {
-                'itunes': resultSearchMain,
+                'imdb': results.results,
             };
             res.send(data);
+            res.end();
         })
 });
 

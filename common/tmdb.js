@@ -1,9 +1,14 @@
 var request = require('request');
 var qs = require('querystring');
 
+var multisearchEndPoint =  'https://api.themoviedb.org/3/search/multi?';
 var searchMovieEndPoint =  'https://api.themoviedb.org/3/search/movie?';
 var searchActorEndPoint = 'https://api.themoviedb.org/3/search/person?';
 var lookupActorEndPoint = 'https://api.themoviedb.org/3/person/';
+
+exports.multiSearch = function (parameters, res, callback) {
+    queryTmdbApiActor(multisearchEndPoint + qs.stringify(parameters), res, callback);
+};
 
 exports.searchMovie = function (parameters, res, callback) {
     queryTmdbApi(searchMovieEndPoint  + qs.stringify(parameters), res, callback);
