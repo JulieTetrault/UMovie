@@ -31,6 +31,11 @@ exports.getMovieItunes = function (req, res, callback) {
     }, res, callback, 'single');
 };
 
+exports.getMovieImdb = function (req, res, callback) {
+    tmdb.lookupMovie({
+        id: req.params.id,
+    }, res, callback, 'single');
+};
 
 exports.getTrailerTv = function (req, res, callback) {
     youtube.searchTrailer({

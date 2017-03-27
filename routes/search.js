@@ -13,7 +13,6 @@ exports.searchTrailerMovie = function (req, res, callback) {
 
 exports.searchGlobal = function (req, res, callback) {
     tmdb.multiSearch({
-        api_key : '4f185468b45ef3e03d91fc31d962d831',
         query: req.query.q,
         page: 1,
         include_adult: false
@@ -29,19 +28,17 @@ exports.searchTvShows = function (req, res, callback) {
     }, res, callback);
 };
 
-exports.searchMovie = function (req, res, callback) {
+exports.searchMovieItunes = function (req, res, callback) {
     itunes.search({
-        term: req.query.q,
+        term: req,
         media: 'movie',
         entity: 'movie',
-        genreId: req.query.genre || '',
-        limit: req.query.limit || 10
+        limit: 10
     }, res, callback);
 };
 
 exports.searchMovieImdb = function (req, res, callback) {
     tmdb.searchMovie({
-        api_key : '4f185468b45ef3e03d91fc31d962d831',
         query: req,
         include_adult: false
     }, res, callback);
@@ -79,7 +76,6 @@ exports.searchActor = function (req, res,  callback) {
 
 exports.searchActorTmdb = function (req, res,  callback) {
     tmdb.searchActor({
-        api_key : '4f185468b45ef3e03d91fc31d962d831',
         query: req,
         include_adult: false
     }, res, callback);

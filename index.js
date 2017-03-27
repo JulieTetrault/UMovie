@@ -123,7 +123,19 @@ app.get('/discover/actor', authentication.isAuthenticated, function(req, res){
         })
 });
 
-app.get('/genres/movies', authentication.isAuthenticated, genres.getMoviesGenres);
+app.get('/genres/movies', authentication.isAuthenticated, function(req, res){
+    async.waterfall([
+            function(callback){
+                genres.getMoviesGenresImdb(req, res, callback);
+            }
+        ],
+        function(err,results){
+            var data = {
+                'imdb': results,
+            };
+            res.send(data);
+        })
+});
 
 app.get('/genres/tvshows', authentication.isAuthenticated, genres.getTvShowsGenres);
 
@@ -269,31 +281,25 @@ app.get('/actors/:id/movies', authentication.isAuthenticated, function(req, res)
 app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
     async.series([
             function(callback){
-                lookup.getMovieItunes(req, res, callback);
+                lookup.getMovieImdb(req, res, callback);
             },
             function(callback) {
                 async.waterfall([
                     function(callback){
-                        lookup.getMovieItunes(req, res, callback);
+                        lookup.getMovieImdb(req, res, callback);
                     },
                     function(response, callback) {
-                        var nameMovie = encodeURI(response.results[0].trackName);
-                        nameMovie = nameMovie.replace(/ *\([^)]*\) */g, "");
-                        if (nameMovie.indexOf(':') > -1)
-                        {
-                            nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
-                        }
-                        search.searchMovieImdb(nameMovie, res, callback);
+                        search.searchMovieItunes(response.title, res, callback);
                     }
                 ], callback);
             },
             function(callback) {
                 async.waterfall([
                     function(callback){
-                        lookup.getMovieItunes(req, res, callback);
+                        lookup.getMovieImdb(req, res, callback);
                     },
                     function(response, callback) {
-                        var nameMovie = response.results[0].trackName;
+                        var nameMovie = response.title;
                         search.searchTrailerMovie(nameMovie, res, callback);
                     }
 
@@ -302,8 +308,8 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
         ],
         function(err,results){
             var data = {
-                'itunes': results[0],
-                'imdb': results[1],
+                'imdb': results[0],
+                'itunes': results[1],
                 'youtube': results[2],
             };
 

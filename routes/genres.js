@@ -1,11 +1,14 @@
 var request = require('request');
 var itunes = require('../common/itunes');
+var tmdb = require('../common/tmdb');
 
 exports.getListMoviesByGenre = function (req, res, callback) {
-    itunes.search({
-        term: 'movie',
-        genreId : req.query.genre,
-        limit: 200
+    tmdb.discoverMovie({
+        sort_by: 'popularity.desc',
+        include_adult:false,
+        include_video:false,
+        page:1,
+        with_genres:req.query.genre
     }, res, callback);
 };
 
@@ -27,6 +30,10 @@ exports.getListActorsByGenre = function (req, res, callback) {
 
 exports.getMoviesGenres = function (req, res) {
     getGenres(req, res, '33');
+};
+
+exports.getMoviesGenresImdb = function (req, res, callback) {
+    tmdb.genresMovie({}, res, callback);
 };
 
 exports.getTvShowsGenres = function (req, res) {
