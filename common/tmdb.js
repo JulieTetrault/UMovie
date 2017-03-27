@@ -52,6 +52,10 @@ exports.discoverMovie = function (parameters, res, callback) {
                 backdrop_path = config_backdrop + backdrop_path;
                 response.results[i].backdrop_path = backdrop_path;
 
+                var poster_path = response.results[i].poster_path;
+                poster_path= config_backdrop + poster_path;
+                response.results[i].poster_path = poster_path;
+
                 if(i == nbResults -1){
                     callback(null, response);
                 }
