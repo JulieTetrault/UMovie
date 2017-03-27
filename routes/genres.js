@@ -4,21 +4,24 @@ var itunes = require('../common/itunes');
 exports.getListMoviesByGenre = function (req, res, callback) {
     itunes.search({
         term: 'movie',
-        genreId : req.query.genre
+        genreId : req.query.genre,
+        limit: 200
     }, res, callback);
 };
 
 exports.getListSeriesByGenre = function (req, res, callback) {
     itunes.search({
         term: 'all',
-        genreId : req.query.genre
+        genreId : req.query.genre,
+        limit: 200
     }, res, callback);
 };
 
 exports.getListActorsByGenre = function (req, res, callback) {
     itunes.search({
         term: 'artist',
-        genreId : req.query.genre
+        genreId : req.query.genre,
+        limit: 200
     }, res, callback);
 };
 

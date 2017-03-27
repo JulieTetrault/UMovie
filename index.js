@@ -174,7 +174,9 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
         ],
         function(err,results){
 
-        //console.log(results[2]);
+        console.log(results[0]);
+        console.log(results[1]);
+        console.log(results[2]);
 
         var query = ((req.query.q).toLowerCase()).trim();
 
@@ -283,7 +285,7 @@ app.get('/search', authentication.isAuthenticated, function(req, res){
             });
 
             resultSearchMain.push.apply(resultSearchMain, resultSearchSecondary);
-            //console.log(resultSearchMain);
+            console.log("fin");
 
             var data = {
                 'itunes': resultSearchMain,
