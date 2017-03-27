@@ -30,8 +30,36 @@ exports.searchActor = function (parameters, res, callback) {
     queryTmdbApi(searchActorEndPoint  + qs.stringify(parameters), res, callback);
 };
 
+
 exports.lookupMovie = function (parameters, res, callback) {
-    queryTmdbApi(lookupMovieEndPoint + parameters.id + '?' + api_key, res, callback);
+    async.waterfall([
+            function(callback){
+                queryTmdbApi(lookupMovieEndPoint + parameters.id + '?' + api_key, res, callback);
+            },
+
+            function(response, callback) {
+                console.log(response);
+
+                var backdrop_path = response.backdrop_path;
+                backdrop_path = config_backdrop + backdrop_path;
+                response.backdrop_path = backdrop_path;
+
+                var poster_path = response.poster_path;
+                poster_path= config_backdrop + poster_path;
+                response.poster_path = poster_path;
+
+                console.log("ok");
+
+                callback(null, response);
+
+            } ],
+        function(err,results){
+            var data = {
+                'imdb': results,
+            };
+            callback(null, data);
+
+        });
 };
 
 exports.lookupActor = function (parameters, res, callback) {

@@ -289,7 +289,7 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
                         lookup.getMovieImdb(req, res, callback);
                     },
                     function(response, callback) {
-                        search.searchMovieItunes(response.title, res, callback);
+                        search.searchMovieItunes(response.imdb.title, res, callback);
                     }
                 ], callback);
             },
@@ -299,8 +299,7 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
                         lookup.getMovieImdb(req, res, callback);
                     },
                     function(response, callback) {
-                        var nameMovie = response.title;
-                        search.searchTrailerMovie(nameMovie, res, callback);
+                        search.searchTrailerMovie(response.imdb.title, res, callback);
                     }
 
                 ], callback);
@@ -308,7 +307,7 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
         ],
         function(err,results){
             var data = {
-                'imdb': results[0],
+                'imdb': results[0].imdb,
                 'itunes': results[1],
                 'youtube': results[2],
             };
