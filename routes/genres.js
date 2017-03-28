@@ -7,7 +7,7 @@ exports.getListMoviesByGenre = function (req, res, callback) {
         sort_by: 'popularity.desc',
         include_adult:false,
         include_video:false,
-        page:1,
+        page: req.query.page,
         with_genres:req.query.genre
     }, res, callback);
 };
