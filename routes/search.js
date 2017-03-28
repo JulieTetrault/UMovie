@@ -10,6 +10,14 @@ exports.searchTrailerMovie = function (req, res, callback) {
     }, res, callback);
 };
 
+exports.searchTrailerTv = function (req, res, callback) {
+    youtube.searchTrailer({
+        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        part : 'snippet',
+        q: req + " tv trailer hd"
+    }, res, callback);
+};
+
 
 exports.searchGlobal = function (req, res, callback) {
     tmdb.multiSearch({
@@ -21,10 +29,10 @@ exports.searchGlobal = function (req, res, callback) {
 
 exports.searchTvShows = function (req, res, callback) {
     itunes.search({
-        term: req.query.q,
+        term: req,
         media: 'tvShow',
         entity: 'tvSeason',
-        limit: req.query.limit || 10
+        limit: 10
     }, res, callback);
 };
 
