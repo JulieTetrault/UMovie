@@ -37,6 +37,14 @@ exports.getMovieImdb = function (req, res, callback) {
     }, res, callback, 'single');
 };
 
+exports.getSerieImdb = function (req, res, callback) {
+    tmdb.lookupSerie({
+        id: req.params.id,
+    }, res, callback, 'single');
+};
+
+
+
 exports.getTrailerTv = function (req, res, callback) {
     youtube.searchTrailer({
         key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',

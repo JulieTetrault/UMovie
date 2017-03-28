@@ -327,6 +327,46 @@ app.get('/movies/:id', authentication.isAuthenticated, function(req, res){
             res.send(data);
         })
 });
+
+app.get('/series/:id', authentication.isAuthenticated, function(req, res){
+    async.series([
+            function(callback){
+                lookup.getSerieImdb(req, res, callback);
+            },
+            function(callback) {
+                async.waterfall([
+                    function(callback){
+                        lookup.getSerieImdb(req, res, callback);
+                    },
+                    function(response, callback) {
+                        console.log(response);
+                        search.searchTvShows(response.imdb.name, res, callback);
+                    }
+                ], callback);
+            },
+            function(callback) {
+                async.waterfall([
+                    function(callback){
+                        lookup.getSerieImdb(req, res, callback);
+                    },
+                    function(response, callback) {
+                        search.searchTrailerTv(response.imdb.name, res, callback);
+                    }
+
+                ], callback);
+            },
+        ],
+        function(err,results){
+            var data = {
+                'imdb': results[0].imdb,
+                'itunes': results[1],
+                'youtube': results[2],
+            };
+
+            res.send(data);
+        })
+});
+
 app.get('/tvshows/seasons/:id', authentication.isAuthenticated, function(req, res){
     async.series([
             function(callback){

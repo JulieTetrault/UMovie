@@ -11,6 +11,7 @@ var multiSearchEndPoint =  'https://api.themoviedb.org/3/search/multi?'+api_key 
 var searchMovieEndPoint =  'https://api.themoviedb.org/3/search/movie?'+api_key;
 var searchActorEndPoint = 'https://api.themoviedb.org/3/search/person?'+api_key;
 var lookupMovieEndPoint = 'https://api.themoviedb.org/3/movie/';
+var lookupTvEndPoint = 'https://api.themoviedb.org/3/tv/';
 var lookupActorEndPoint = 'https://api.themoviedb.org/3/person/';
 var discoverMovieEndPoint = 'https://api.themoviedb.org/3/discover/movie?'+api_key;
 var discoverSerieEndPoint = 'https://api.themoviedb.org/3/discover/tv?'+api_key;
@@ -54,8 +55,6 @@ exports.lookupMovie = function (parameters, res, callback) {
                 poster_path= config_backdrop + poster_path;
                 response.poster_path = poster_path;
 
-                console.log("ok");
-
                 callback(null, response);
 
             } ],
@@ -67,6 +66,39 @@ exports.lookupMovie = function (parameters, res, callback) {
 
         });
 };
+
+exports.lookupSerie = function (parameters, res, callback) {
+    async.waterfall([
+            function(callback){
+                queryTmdbApi(lookupTvEndPoint + parameters.id + '?' + api_key, res, callback);
+            },
+
+            function(response, callback) {
+                var mainBackdrop_path = response.backdrop_path;
+                mainBackdrop_path = config_backdrop + mainBackdrop_path;
+                response.backdrop_path = mainBackdrop_path;
+
+                var mainPoster_path = response.poster_path;
+                mainPoster_path  = config_backdrop + mainPoster_path ;
+                response.poster_path = mainPoster_path ;
+
+                for (var i = 0; i< response.seasons.length; i++){
+                    var seasonPoster_path = response.seasons[i].poster_path;
+                    seasonPoster_path = config_backdrop + seasonPoster_path ;
+                    response.seasons[i].poster_path = seasonPoster_path;
+                }
+                callback(null, response);
+
+            } ],
+        function(err,results){
+            var data = {
+                'imdb': results,
+            };
+            callback(null, data);
+
+        });
+};
+
 
 exports.lookupActor = function (parameters, res, callback) {
     queryTmdbApi(lookupActorEndPoint + parameters.q +'?' + api_key, res, callback);
