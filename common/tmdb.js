@@ -164,6 +164,7 @@ exports.discoverSerie = function (parameters, res, callback) {
         function(err,results){
             var data = {
                 'imdb': results.results,
+                'total_pages' : results.total_pages
             };
             callback(null, data);
 
@@ -197,6 +198,7 @@ exports.discoverActor = function (parameters, res, callback) {
         function(err,results){
             var data = {
                 'imdb': results.results,
+                'total_pages' : results.total_pages
             };
             callback(null, data);
 

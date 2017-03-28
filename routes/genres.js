@@ -5,30 +5,29 @@ var tmdb = require('../common/tmdb');
 exports.getListMoviesByGenre = function (req, res, callback) {
     tmdb.discoverMovie({
         sort_by: 'popularity.desc',
-        include_adult:false,
-        include_video:false,
+        include_adult: false,
+        include_video: false,
         page: req.query.page,
-        with_genres:req.query.genre
+        with_genres: req.query.genre
     }, res, callback);
 };
 
 exports.getListSeriesByGenre = function (req, res, callback) {
     tmdb.discoverSerie({
         sort_by: 'popularity.desc',
-        include_adult:false,
-        include_video:false,
-        page:1,
-        with_genres:req.query.genre
+        include_adult: false,
+        include_video: false,
+        page: req.query.page,
+        with_genres: req.query.genre
     }, res, callback);
 };
 
 exports.getListActorsPopular = function (req, res, callback) {
     tmdb.discoverActor({
         sort_by: 'popularity.desc',
-        include_adult:false,
-        include_video:false,
-        page:1,
-        with_genres:req.query.genre
+        include_adult: false,
+        include_video: false,
+        page: req.query.page,
     }, res, callback);
 };
 
