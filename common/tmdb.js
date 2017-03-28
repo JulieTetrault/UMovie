@@ -14,6 +14,7 @@ var lookupMovieEndPoint = 'https://api.themoviedb.org/3/movie/';
 var lookupActorEndPoint = 'https://api.themoviedb.org/3/person/';
 var discoverMovieEndPoint = 'https://api.themoviedb.org/3/discover/movie?'+api_key;
 var discoverSerieEndPoint = 'https://api.themoviedb.org/3/discover/tv?'+api_key;
+var discoverActorEndPoint = 'https://api.themoviedb.org/3/person/popular?'+api_key;
 
 
 exports.genresMovie = function (parameters, res, callback) {
@@ -109,6 +110,39 @@ exports.discoverSerie = function (parameters, res, callback) {
     async.waterfall([
             function(callback){
                 queryTmdbApi(discoverSerieEndPoint  + '&'+ qs.stringify(parameters), res, callback);
+            },
+
+            function(response, callback) {
+                var nbResults = response.results.length;
+                for(var i = 0; i<nbResults; i++){
+                    var backdrop_path = response.results[i].backdrop_path;
+                    backdrop_path = config_backdrop + backdrop_path;
+                    response.results[i].backdrop_path = backdrop_path;
+
+                    var poster_path = response.results[i].poster_path;
+                    poster_path= config_backdrop + poster_path;
+                    response.results[i].poster_path = poster_path;
+
+                    if(i == nbResults -1){
+                        callback(null, response);
+                    }
+                }
+            } ],
+        function(err,results){
+            var data = {
+                'imdb': results.results,
+            };
+            callback(null, data);
+
+        });
+
+};
+
+exports.discoverActor = function (parameters, res, callback) {
+
+    async.waterfall([
+            function(callback){
+                queryTmdbApi(discoverActorEndPoint  + '&'+ qs.stringify(parameters), res, callback);
             },
 
             function(response, callback) {

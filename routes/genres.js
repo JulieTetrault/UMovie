@@ -22,11 +22,13 @@ exports.getListSeriesByGenre = function (req, res, callback) {
     }, res, callback);
 };
 
-exports.getListActorsByGenre = function (req, res, callback) {
-    itunes.search({
-        term: 'artist',
-        genreId : req.query.genre,
-        limit: 200
+exports.getListActorsPopular = function (req, res, callback) {
+    tmdb.discoverActor({
+        sort_by: 'popularity.desc',
+        include_adult:false,
+        include_video:false,
+        page:1,
+        with_genres:req.query.genre
     }, res, callback);
 };
 
