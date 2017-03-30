@@ -11,6 +11,7 @@ exports.addMovieToWatchlist = function (req, res) {
                     var movie = new Movie(req.body);
                     watchlist.movies.push(movie.toJSON());
                     watchlist.save();
+                    console.log(typeof(movie.toJSON()))
                     res.status(200).send(watchlist);
                 } else {
                     res.status(412).send({
@@ -91,7 +92,7 @@ exports.removeMovieFromWatchlist = function (req, res) {
         if (!err) {
             if (watchlist) {
                 var movieToRemove = watchlist.movies.filter(function (movie) {
-                    return movie.trackId == req.params.trackId;
+                    return movie.id == req.params.trackId;
                 }).pop();
 
                 if (movieToRemove) {

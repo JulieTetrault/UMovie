@@ -47,7 +47,8 @@ exports.searchMovieItunes = function (req, res, callback) {
 
 exports.searchMovieImdb = function (req, res, callback) {
     tmdb.searchMovie({
-        query: req,
+        query: req.query.q,
+        page: 1,
         include_adult: false
     }, res, callback);
 };

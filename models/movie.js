@@ -3,31 +3,20 @@ var Schema = mongoose.Schema;
 var modelHelpers = require('./modelHelpers.js');
 
 var movieSchema = new Schema({
-    trackId: Number,
-    artistName: String,
-    trackName: String,
-    trackCensoredName: String,
-    trackViewUrl: String,
-    previewUrl: String,
-    artworkUrl30: String,
-    artworkUrl60: String,
-    artworkUrl100: String,
-    collectionPrice: Number,
-    trackPrice: Number,
-    trackRentalPrice: Number,
-    collectionHdPrice: Number,
-    trackHdPrice: Number,
-    trackHdRentalPrice: Number,
-    releaseDate: Date,
-    collectionExplicitness: String,
-    trackExplicitness: String,
-    trackTimeMillis: Number,
-    country: String,
-    currency: String,
-    primaryGenreName: String,
-    contentAdvisoryRating: String,
-    longDescription: String,
-    radioStationUrl: String
+    adult: Boolean,
+    backdrop_path: String,
+    genre_ids: Array,
+    id: Number,
+    original_language: String,
+    original_title: String,
+    overview: String,
+    popularity: Number,
+    poster_path: String,
+    release_date: String,
+    title: String,
+    video: Boolean,
+    vote_average: Number,
+    vote_count: Number
 });
 
 movieSchema.method('toJSON', modelHelpers.toJSON);
