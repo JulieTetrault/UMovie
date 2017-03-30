@@ -212,23 +212,17 @@ app.delete('/follow/:id', authentication.isAuthenticated, user.unfollow);
 app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
     async.series([
             function (callback) {
-                lookup.getActor(req, res, callback);
+                lookup.getActorTmdb(req, res, callback);
             },
 
             function (callback) {
                 async.waterfall([
                     function (callback) {
-                        lookup.getActor(req, res, callback);
+                        lookup.getActorTmdb(req, res, callback);
                     },
 
                     function (response, callback) {
-                        var nameActor = encodeURI(response.results[0].artistName);
-                        search.searchActorTmdb(nameActor, res, callback);
-                    },
-
-                    function (response, callback) {
-                        lookup.getActorTmdb(response.results[0].id, res, callback);
-
+                        search.searchActor(response.name , res, callback);
                     }
 
                 ], callback);
@@ -236,11 +230,11 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
 
         ],
         function (err, results) {
-            var profile = results[1].profile_path
-            results[1].profile_path = 'https://image.tmdb.org/t/p/original' + profile;
+            var profile = results[0].profile_path
+            results[0].profile_path = 'https://image.tmdb.org/t/p/original' + profile;
             var data = {
-                'itunes': results[0],
-                'imdb': results[1],
+                'imdb': results[0],
+                'itunes': results[1],
             };
 
             res.send(data);

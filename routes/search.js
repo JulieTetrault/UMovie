@@ -75,10 +75,10 @@ exports.searchTvShowSeason = function (req, res) {
 exports.searchActor = function (req, res,  callback) {
     itunes.search({
         attribute : 'movieArtistTerm',
-        term: req.query.q,
+        term: req,
         media: 'movie',
         entity: 'movieArtist',
-        limit: req.query.limit || 10
+        limit: 10
     }, res,  callback);
 };
 

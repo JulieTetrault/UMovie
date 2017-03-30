@@ -11,9 +11,9 @@ exports.getActor = function (req, res, callback) {
 };
 
 exports.getActorTmdb = function (req, res, callback) {
-    console.log(req);
+    console.log(req.params.id);
     tmdb.lookupActor({
-        q : req
+        q : req.params.id
     }, res, callback);
 };
 
