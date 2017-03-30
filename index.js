@@ -176,7 +176,8 @@ app.get('/search/actors', authentication.isAuthenticated, function (req, res) {
 app.get('/search/movies', authentication.isAuthenticated, function (req, res) {
     async.series([
             function (callback) {
-                var nameMovie = req.query.q;
+                console.log(req)
+                var nameMovie = req.query;
                 nameMovie = nameMovie.replace(/ *\([^)]*\) */g, "");
                 if (nameMovie.indexOf(':') > -1) {
                     nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
