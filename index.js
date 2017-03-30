@@ -223,7 +223,23 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
 
                     function (response, callback) {
                         search.searchActor(response.name , res, callback);
-                    }
+                    },
+
+                ], callback);
+            },
+            function (callback) {
+                async.waterfall([
+                    function (callback) {
+                        lookup.getActorTmdb(req, res, callback);
+                    },
+
+                    function (response, callback) {
+                        search.searchActor(response.name , res, callback);
+                    },
+                    function (response, callback) {
+                    console.log(response.results[0].artistId);
+                        lookup.getActorMovies(response.results[0].artistId, res, callback);
+                    },
 
                 ], callback);
             }
@@ -235,6 +251,7 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
             var data = {
                 'imdb': results[0],
                 'itunes': results[1],
+                'movies' : results[2]
             };
 
             res.send(data);

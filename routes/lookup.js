@@ -19,7 +19,7 @@ exports.getActorTmdb = function (req, res, callback) {
 
 exports.getActorMovies = function (req, res, callback) {
     itunes.lookup({
-        id: req.params.id,
+        id: req,
         entity: 'movie'
     }, res, callback, 'many');
 };
