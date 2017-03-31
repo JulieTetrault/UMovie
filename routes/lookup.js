@@ -55,14 +55,14 @@ exports.getTrailerTv = function (req, res, callback) {
 
 exports.getTvShowSeason = function (req, res, callback) {
     itunes.lookup({
-        id: req.params.id,
+        id: req,
         entity: 'tvSeason'
     }, res, callback, 'single');
 };
 
 exports.getTvShowEpisodes = function (req, res, callback) {
     itunes.lookup({
-        id: req.params.id,
+        id: req,
         entity: 'tvEpisode'
     }, res, callback, 'many');
 };

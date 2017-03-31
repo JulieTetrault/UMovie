@@ -222,7 +222,7 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
                     },
 
                     function (response, callback) {
-                        search.searchActor(response.name , res, callback);
+                        search.searchActor(response.name, res, callback);
                     },
 
                 ], callback);
@@ -234,10 +234,9 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
                     },
 
                     function (response, callback) {
-                        search.searchActor(response.name , res, callback);
+                        search.searchActor(response.name, res, callback);
                     },
                     function (response, callback) {
-                    console.log(response.results[0].artistId);
                         lookup.getActorMovies(response.results[0].artistId, res, callback);
                     },
 
@@ -251,7 +250,7 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
             var data = {
                 'imdb': results[0],
                 'itunes': results[1],
-                'movies' : results[2]
+                'movies': results[2]
             };
 
             res.send(data);
@@ -312,46 +311,81 @@ app.get('/movies/:id', authentication.isAuthenticated, function (req, res) {
         })
 });
 
-app.get('/series/:id', authentication.isAuthenticated, function(req, res){
+app.get('/series/:id', authentication.isAuthenticated, function (req, res) {
     async.series([
-            function(callback){
+            function (callback) {
                 lookup.getSerieImdb(req, res, callback);
             },
-            function(callback) {
+            function (callback) {
                 async.waterfall([
-                    function(callback){
+                    function (callback) {
                         lookup.getSerieImdb(req, res, callback);
                     },
-                    function(response, callback) {
-                        console.log(response);
+                    function (response, callback) {
                         search.searchTvShows(response.imdb.name, res, callback);
                     }
                 ], callback);
             },
-            function(callback) {
+            function (callback) {
                 async.waterfall([
-                    function(callback){
+                    function (callback) {
                         lookup.getSerieImdb(req, res, callback);
                     },
-                    function(response, callback) {
+                    function (response, callback) {
                         search.searchTrailerTv(response.imdb.name, res, callback);
                     }
 
+
+                ], callback);
+            },
+            function (callback) {
+                async.waterfall([
+                    function (callback) {
+                        lookup.getSerieImdb(req, res, callback);
+                    },
+                    function (response, callback) {
+                        search.searchTvShows(response.imdb.name, res, callback);
+                    },
+                    function (response, callback) {
+                        lookup.getTvShowSeason(response.results[0].artistId, res, callback);
+                    },
+                    function (response, callback) {
+                        var datas = []
+                        async.each(response.results, function (result, callback) {
+                            var season = result;
+                            async.series([
+                                    function (callback) {
+                                        lookup.getTvShowEpisodes(result.collectionId, res, callback);
+                                    }
+                                ],
+                                function (err, results) {
+                                    var data = {
+                                        'tvEpisodes': results[0].results,
+                                    };
+                                    season["tvEpisodes"] = data.tvEpisodes;
+                                    datas.push(season);
+                                    console.log(datas); //réussir à sortir le datas d'ici
+                                })
+                            callback();
+                        })
+                        callback();
+                    }
                 ], callback);
             },
         ],
-        function(err,results){
+        function (err, results) {
             var data = {
                 'imdb': results[0].imdb,
                 'itunes': results[1],
                 'youtube': results[2],
+                'tvSeasons': results[3] //pour l'avoir ici
             };
-
             res.send(data);
-        })
+        }
+    )
 });
 
-app.get('/tvshows/seasons/:id', authentication.isAuthenticated, function(req, res) {
+app.get('/tvshows/seasons/:id', authentication.isAuthenticated, function (req, res) {
 
     async.series([
             function (callback) {
