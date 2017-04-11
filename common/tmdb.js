@@ -5,6 +5,8 @@ var async = require('async');
 var api_key = 'api_key=4f185468b45ef3e03d91fc31d962d831';
 var config_backdrop = 'https://image.tmdb.org/t/p/original';
 
+//test
+
 var listGenresMovieEndPoint = 'https://api.themoviedb.org/3/genre/movie/list?'+api_key;
 var listGenresSerieEndPoint = 'https://api.themoviedb.org/3/genre/tv/list?'+api_key;
 var multiSearchEndPoint =  'https://api.themoviedb.org/3/search/multi?'+api_key +'&';
