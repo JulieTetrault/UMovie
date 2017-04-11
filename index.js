@@ -337,64 +337,30 @@ app.get('/series/:id', authentication.isAuthenticated, function (req, res) {
 
 
                 ], callback);
-            },
-            function (callback) {
-                async.waterfall([
-                    function (callback) {
-                        lookup.getSerieImdb(req, res, callback);
-                    },
-                    function (response, callback) {
-                        search.searchTvShows(response.imdb.name, res, callback);
-                    },
-                    function (response, callback) {
-                        lookup.getTvShowSeason(response.results[0].artistId, res, callback);
-                    },
-                    function (response, callback) {
-                        var datas = []
-                        async.each(response.results, function (result, callback) {
-                            var season = result;
-                            async.series([
-                                    function (callback) {
-                                        lookup.getTvShowEpisodes(result.collectionId, res, callback);
-                                    }
-                                ],
-                                function (err, results) {
-                                    var data = {
-                                        'tvEpisodes': results[0].results,
-                                    };
-                                    season["tvEpisodes"] = data.tvEpisodes;
-                                    datas.push(season);
-                                    console.log(datas); //réussir à sortir le datas d'ici
-                                })
-                            callback();
-                        })
-                        callback();
-                    }
-                ], callback);
-            },
+            }
         ],
         function (err, results) {
             var data = {
                 'imdb': results[0].imdb,
                 'itunes': results[1],
                 'youtube': results[2],
-                'tvSeasons': results[3] //pour l'avoir ici
             };
             res.send(data);
         }
     )
 });
 
-app.get('/tvshows/seasons/:id', authentication.isAuthenticated, function (req, res) {
+app.get('/series/:idSerie/seasons/:idSeason', authentication.isAuthenticated, function (req, res) {
 
     async.series([
             function (callback) {
-                lookup.getTvShowSeason(req, res, callback);
+                lookup.getSerieSeasonsImdb(req, res, callback);
             }
         ],
         function (err, results) {
+           results[0].poster_path = 'https://image.tmdb.org/t/p/original' + results[0].poster_path;
             var data = {
-                'itunes': results[0],
+                'imdb': results[0],
             };
             res.send(data);
         })

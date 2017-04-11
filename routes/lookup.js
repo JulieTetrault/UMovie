@@ -3,6 +3,12 @@ var youtube = require('../common/youtube');
 var tmdb = require('../common/tmdb');
 
 
+exports.getSerieSeasonsImdb = function (req, res, callback) {
+    tmdb.lookupSerieSeason({
+        id: req.params.idSerie,
+        seasonNumber: req.params.idSeason
+    }, res, callback);
+};
 exports.getActor = function (req, res, callback) {
     itunes.lookup({
         id: req.params.id,

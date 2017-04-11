@@ -38,6 +38,10 @@ exports.searchActor = function (parameters, res, callback) {
     queryTmdbApi(searchActorEndPoint  + qs.stringify(parameters), res, callback);
 };
 
+exports.lookupSerieSeason = function (parameters, res, callback) {
+    queryTmdbApi(lookupTvEndPoint  + parameters.id + '/season/' + parameters.seasonNumber +'?'+ api_key, res, callback);
+
+};
 
 exports.lookupMovie = function (parameters, res, callback) {
     async.waterfall([
