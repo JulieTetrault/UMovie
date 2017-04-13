@@ -144,17 +144,15 @@ app.get('/search/tvshows', authentication.isAuthenticated, function (req, res) {
     async.series([
             function (callback) {
                 search.searchTvShows(req, res, callback);
-            },
-            function (callback) {
-                lookup.getTrailerTv(req, res, callback);
             }
         ],
         function (err, results) {
+            console.log("ok");
             var data = {
-                'itunes': results[0],
-                'youtube': results[1],
+                'itunes': results,
             };
             res.send(data);
+            res.end();
         })
 });
 
@@ -163,7 +161,6 @@ app.get('/search/actors', authentication.isAuthenticated, function (req, res) {
             function (callback) {
                 search.searchActor(req, res, callback);
             }
-
         ],
         function (err, results) {
             var data = {

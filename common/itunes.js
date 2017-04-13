@@ -37,6 +37,7 @@ function successCallback(body,callback, amount) {
         callback(null, body);
     }
     else {
+        console.log(body);
         callback(null, body);
     }
 }
