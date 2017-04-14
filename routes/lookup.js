@@ -24,10 +24,9 @@ exports.getActorTmdb = function (req, res, callback) {
 };
 
 exports.getActorMovies = function (req, res, callback) {
-    itunes.lookup({
-        id: req,
-        entity: 'movie'
-    }, res, callback, 'many');
+    tmdb.lookupActorMovies({
+        q : req
+    }, res, callback);
 };
 
 exports.getMovieItunes = function (req, res, callback) {
