@@ -9,6 +9,7 @@ exports.searchTrailer = function (parameters, res, callback) {
 
 
 function queryYoutuneApi(url, res, callback) {
+    console.log(url);
     request({
             uri: url,
             method: 'GET',

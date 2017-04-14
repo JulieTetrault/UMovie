@@ -363,11 +363,27 @@ app.get('/tvshows/seasons/:id/episodes', authentication.isAuthenticated, functio
     async.series([
             function (callback) {
                 lookup.getTvShowEpisodes(req, res, callback);
-            }
+            },
+
+        ],
+        function (err, results) {
+            console.log(results[1]);
+            var data = {
+                'itunes': results[0],
+            };
+            res.send(data);
+        })
+});
+
+app.get('/tvshows/episode/trailer', authentication.isAuthenticated, function (req, res) {
+    async.series([
+            function (callback) {
+                search.searchTrailerTvEpisode(req , res, callback);
+            },
         ],
         function (err, results) {
             var data = {
-                'itunes': results[0],
+                'youtube': results[0],
             };
             res.send(data);
         })

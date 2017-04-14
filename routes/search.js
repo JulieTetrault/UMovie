@@ -23,7 +23,7 @@ exports.searchTrailerTvEpisode = function (req, res, callback) {
     youtube.searchTrailer({
         key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
         part : 'snippet',
-        q: req + " episode trailer hd"
+        q: req.params.q + " episode trailer hd"
     }, res, callback);
 };
 

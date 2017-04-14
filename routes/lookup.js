@@ -67,7 +67,7 @@ exports.getTvShowSeason = function (req, res, callback) {
 
 exports.getTvShowEpisodes = function (req, res, callback) {
     itunes.lookup({
-        id: req,
+        id: req.params.id,
         entity: 'tvEpisode'
     }, res, callback, 'many');
 };
