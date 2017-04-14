@@ -106,6 +106,9 @@ exports.lookupSerie = function (parameters, res, callback) {
         });
 };
 
+exports.lookupActorMovies = function (parameters, res, callback) {
+    queryTmdbApi(discoverMovieEndPoint + '&with_cast='  + parameters.q, res, callback);
+};
 
 exports.lookupActor = function (parameters, res, callback) {
     queryTmdbApi(lookupActorEndPoint + parameters.q +'?' + api_key, res, callback);

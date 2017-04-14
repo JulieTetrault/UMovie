@@ -229,11 +229,8 @@ app.get('/actors/:id', authentication.isAuthenticated, function (req, res) {
                     },
 
                     function (response, callback) {
-                        search.searchActor(response.name, res, callback);
-                    },
-                    function (response, callback) {
-                        lookup.getActorMovies(response.results[0].artistId, res, callback);
-                    },
+                        lookup.getActorMovies(response.id, res, callback);
+                    }
 
                 ], callback);
             }
