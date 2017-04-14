@@ -143,16 +143,14 @@ app.get('/search', authentication.isAuthenticated, function (req, res) {
 app.get('/search/tvshows', authentication.isAuthenticated, function (req, res) {
     async.series([
             function (callback) {
-                search.searchTvShows(req, res, callback);
+                search.searchTvShowsSeries(req, res, callback);
             }
         ],
         function (err, results) {
-            console.log("ok");
             var data = {
-                'itunes': results,
+                'itunes': results[0].results,
             };
             res.send(data);
-            res.end();
         })
 });
 
