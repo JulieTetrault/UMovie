@@ -9,9 +9,9 @@ exports.addMovieToWatchlist = function (req, res) {
             if (watchlist) {
                 if (req.body) {
                     var movie = new Movie(req.body);
-                    watchlist.movies.push(movie.toJSON());
+                    watchlist.movies.push(movie);
                     watchlist.save();
-                    console.log(typeof(movie.toJSON()))
+                    console.log(typeof(movie));
                     res.status(200).send(watchlist);
                 } else {
                     res.status(412).send({
@@ -65,6 +65,7 @@ exports.createWatchlistUnsecure = function (req, res) {
 exports.getWatchlists = function (req, res) {
     Watchlist.find({}, function (err, watchlists) {
         if (!err) {
+            console.log(watchlists);
             res.status(200).send(watchlists || []);
         } else {
             console.log(err);
