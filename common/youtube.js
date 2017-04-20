@@ -14,7 +14,7 @@ function queryYoutuneApi(url, res, callback) {
             uri: url,
             method: 'GET',
             beforeSend: function (xhr) {
-                xhr.setRequestHeader('key', 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go');
+                xhr.setRequestHeader('key', 'AIzaSyBew5ya6Y4_-XBE-3vajgQbeNaPM9YbuLs');
             },
         },
         function (error, response, body) {

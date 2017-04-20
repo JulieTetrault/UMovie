@@ -4,7 +4,7 @@ var tmdb = require('../common/tmdb');
 
 exports.searchTrailerMovie = function (req, res, callback) {
     youtube.searchTrailer({
-        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        key : 'AIzaSyBew5ya6Y4_-XBE-3vajgQbeNaPM9YbuLs',
         part : 'snippet',
         q: req + " movie trailer hd"
     }, res, callback);
@@ -12,7 +12,7 @@ exports.searchTrailerMovie = function (req, res, callback) {
 
 exports.searchTrailerTv = function (req, res, callback) {
     youtube.searchTrailer({
-        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        key : 'AIzaSyBew5ya6Y4_-XBE-3vajgQbeNaPM9YbuLs',
         part : 'snippet',
         q: req + " tv trailer hd"
     }, res, callback);
@@ -21,7 +21,7 @@ exports.searchTrailerTv = function (req, res, callback) {
 
 exports.searchTrailerTvEpisode = function (req, res, callback) {
     youtube.searchTrailer({
-        key : 'AIzaSyC0tF7MUWtVaGEnxQWOOjHSGA_Ty_nE9go',
+        key : 'AIzaSyBew5ya6Y4_-XBE-3vajgQbeNaPM9YbuLs',
         part : 'snippet',
         q: req.params.q + " episode trailer hd"
     }, res, callback);
