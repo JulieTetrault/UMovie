@@ -68,6 +68,29 @@ app.get('/discover/movie', authentication.isAuthenticated, function (req, res) {
     async.waterfall([
             function (callback) {
                 genres.getListMoviesByGenre(req, res, callback);
+            },
+            function(response, callback){
+
+                    async.forEachOf(response.imdb, function (movie, movieIndex, callback) {
+                        async.parallel([
+                                function (callback) {
+                                    search.searchMovieItunes(movie.title , res, callback);
+                                },
+                            ],
+                            function (err, results) {
+
+                                if(results[0].results[0] == undefined){
+                                    response.imdb[movieIndex].title = "undefined";
+                                    console.log(response.imdb[movieIndex].title);
+                                }
+                                callback()
+
+                            });
+                    }, function(err){
+                        callback(null, response);
+                    });
+
+
             }
         ],
         function (err, results) {
@@ -79,6 +102,29 @@ app.get('/discover/serie', authentication.isAuthenticated, function (req, res) {
     async.waterfall([
             function (callback) {
                 genres.getListSeriesByGenre(req, res, callback);
+            },
+            function(response, callback){
+
+                async.forEachOf(response.imdb, function (serie, serieIndex, callback) {
+                    async.parallel([
+                            function (callback) {
+                                search.searchTvShows(serie.name, res, callback);
+                            },
+                        ],
+                        function (err, results) {
+
+                            if(results[0].results[0] == undefined){
+                                response.imdb[serieIndex].name = "undefined";
+                                console.log(response.imdb[serieIndex].name);
+                            }
+                            callback()
+
+                        });
+                }, function(err){
+                    callback(null, response);
+                });
+
+
             }
         ],
         function (err, results) {
@@ -91,6 +137,29 @@ app.get('/discover/actor', authentication.isAuthenticated, function (req, res) {
             function (callback) {
                 genres.getListActorsPopular(req, res, callback);
             },
+            function(response, callback){
+
+                async.forEachOf(response.imdb, function (actor, actorIndex, callback) {
+                    async.parallel([
+                            function (callback) {
+                                search.searchActor(actor.name, res, callback);
+                            },
+                        ],
+                        function (err, results) {
+
+                            if(results[0].results[0] == undefined){
+                                response.imdb[actorIndex].name = "undefined";
+                                console.log(response.imdb[actorIndex].name);
+                            }
+                            callback()
+
+                        });
+                }, function(err){
+                    callback(null, response);
+                });
+
+
+            }
         ],
         function (err, results) {
             res.send(results);
@@ -127,12 +196,12 @@ app.get('/genres/tvShows', authentication.isAuthenticated, function (req, res) {
 
 app.get('/search', authentication.isAuthenticated, function (req, res) {
     async.series([
-            function (callback) {
-                search.searchGlobal(req, res, callback);
-            },
-            function(callback){
-                user.findByName(req, res, callback);
-            }
+        function(callback){
+            search.searchGlobal(req, res, callback);
+        },
+        function(callback){
+            user.findByName(req, res, callback);
+        }
         ],
         function (err, results) {
             var data = {
@@ -173,25 +242,38 @@ app.get('/search/actors', authentication.isAuthenticated, function (req, res) {
 });
 
 app.get('/search/movies', authentication.isAuthenticated, function (req, res) {
-    async.series([
+    async.waterfall([
             function (callback) {
                 search.searchMovieImdb(req, res, callback);
             },
-            function (callback) {
-                var nameMovie = req.query.q;
-                nameMovie = nameMovie.replace(/ *\([^)]*\) *!/g, "");
-                if (nameMovie.indexOf(':') > -1) {
-                    nameMovie = nameMovie.substring(0, nameMovie.indexOf(':'));
-                }
-                search.searchMovieItunes(nameMovie, res, callback);
-            },
+            function(response, callback){
+                async.forEachOf(response.results, function (movie, movieIndex, callback) {
+                    async.parallel([
+                            function (callback) {
+                                search.searchMovieItunes(movie.title , res, callback);
+                            },
+                        ],
+                        function (err, results) {
+
+                            if(results[0].results[0] == undefined){
+                                console.log(response.results[movieIndex].title);
+                                response.results[movieIndex].original_title = "undefined";
+                                console.log(response.results[movieIndex].original_title);
+                            }
+                            callback()
+
+                        });
+                }, function(err){
+                    callback(null, response);
+                });
+
+            }
 
         ],
         function (err, results) {
 
             var data = {
-                'imdb': results[0],
-                'itunes': results[1]
+                'imdb': results,
             };
             res.send(data);
         })
