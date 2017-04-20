@@ -257,8 +257,8 @@ app.get('/search/movies', authentication.isAuthenticated, function (req, res) {
 
                             if(results[0].results[0] == undefined){
                                 console.log(response.results[movieIndex].title);
-                                response.results[movieIndex].original_title = "undefined";
-                                console.log(response.results[movieIndex].original_title);
+                                response.results[movieIndex].title = "undefined";
+                                console.log(response.results[movieIndex].title);
                             }
                             callback()
 
