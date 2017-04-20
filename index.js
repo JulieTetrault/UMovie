@@ -126,14 +126,18 @@ app.get('/genres/tvShows', authentication.isAuthenticated, function (req, res) {
 });
 
 app.get('/search', authentication.isAuthenticated, function (req, res) {
-    async.waterfall([
+    async.series([
             function (callback) {
                 search.searchGlobal(req, res, callback);
+            },
+            function(callback){
+                user.findByName(req, res, callback);
             }
         ],
         function (err, results) {
             var data = {
-                'imdb': results.results,
+                'imdb': results[0].results,
+                'users': results[1],
             };
             res.send(data);
             res.end();

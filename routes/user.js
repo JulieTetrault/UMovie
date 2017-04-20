@@ -47,7 +47,7 @@ exports.findById = function (req, res) {
     
 };
 
-exports.findByName = function (req, res) {
+exports.findByName = function (req, res, callback) {
     var name = req.query.q;
     User.find({
         name: new RegExp(name, 'i')
@@ -58,7 +58,7 @@ exports.findByName = function (req, res) {
                 for (var i = 0; i < users.length; i++) {
                     formattedUsers.push(users[i].toDTO(true));
                 }
-                res.status(200).send(formattedUsers);
+                callback(null, formattedUsers);
             } else {
                 res.status(404).send({
                     errorCode: 'USER_NOT_FOUND',
